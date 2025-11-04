@@ -1,4 +1,4 @@
-package storer
+package storage
 
 import "fmt"
 
@@ -11,9 +11,9 @@ type User struct {
 type UserStorer interface {
 	AddUser(user *User) error
 	GetUsers() ([]*User, error)
-	GetUserByID(id int) (*User, error)
-	UpdateUser(id int, name string, email string) error
-	DeleteUser(id int) error
+	GetUserByID(id string) (*User, error)
+	UpdateUser(id string, name string, email string) error
+	DeleteUser(id string) error
 }
 
 var ErrorUserNotFound = func(id int) error {
