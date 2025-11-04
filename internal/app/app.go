@@ -19,10 +19,9 @@ func MenuChoice() {
 	fmt.Println("What do you want to do ?")
 	fmt.Println("\n")
 	fmt.Println("1. Create a user")
-	fmt.Println("2. Update a user")
-	fmt.Println("3. Remove a user")
-	fmt.Println("4. Users list")
-	fmt.Println("5. Exit")
+	fmt.Println("2. Users list")
+	fmt.Println("3. User by ID")
+	fmt.Println("4. Exit")
 	fmt.Println("____________________________")
 	fmt.Println()
 }
@@ -40,7 +39,7 @@ func Run() {
 		if err != nil {
 			var discard string
 			fmt.Scanln(&discard)
-			fmt.Println("❌ Invalid input. Please enter a number.\n\n")
+			fmt.Println("Invalid input. Please enter a number.\n\n")
 			continue
 		}
 
@@ -51,7 +50,9 @@ func Run() {
 			handleAddUser()
 		case 2:
 			handleGetUsers()
-		case 5:
+		case 3:
+			handleGetUsersById()
+		case 4:
 			colorText.CyanText("Bye bye")
 			return
 		default:
@@ -88,18 +89,42 @@ func handleAddUser() {
 
 	id, err := store.AddUser(newUser)
 
-	colorText.GreenText(fmt.Sprintf("✅ User added successfully with ID: %s\n", id))
+	colorText.GreenText(fmt.Sprintf("User added successfully with ID: %s\n", id))
 }
 
 func handleGetUsers() {
 	users, err := store.GetUsers()
 	if err != nil {
-		colorText.RedText(fmt.Sprintf("❌ Error: %s\n", err))
+		colorText.RedText(fmt.Sprintf("Error: %s\n", err))
 		return
 	}
 
-	for id, u := range users {
-		fmt.Printf("ID: %s | Name: %s | Email: %s\n", id, u.Name, u.Email)
+	for _, u := range users {
+		fmt.Printf("ID: %s | Name: %s | Email: %s\n", u.ID, u.Name, u.Email)
 	}
 	colorText.CyanText("==================")
+}
+
+func handleGetUsersById() {
+	userID, err := prompt("\nGive me the UserID: ")
+	if err != nil {
+		colorText.RedText(fmt.Sprintf("Error reading ID: %s\n", err))
+		return
+	}
+
+	userID = strings.TrimSpace(userID)
+	if userID == "" {
+		colorText.RedText("User ID cannot be empty\n")
+		return
+	}
+
+	user, err := store.GetUserByID(userID)
+	if err != nil {
+		colorText.RedText(fmt.Sprintf("Error: %s\n", err))
+		return
+	}
+
+	colorText.CyanText("\n=== User Found ===\n")
+	fmt.Printf("ID: %s | Name: %s | Email: %s\n", user.ID, user.Name, user.Email)
+	colorText.CyanText("==================\n\n")
 }

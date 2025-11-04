@@ -20,6 +20,9 @@ func (m *MemoryUserStore) AddUser(user *User) (string, error) {
 	}
 
 	id := uuid.New().String()
+
+	user.ID = id
+
 	m.users[id] = user
 	return id, nil
 }

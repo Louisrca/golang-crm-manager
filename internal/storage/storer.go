@@ -3,8 +3,6 @@ package storage
 import (
 	"fmt"
 	"strings"
-
-	"github.com/google/uuid"
 )
 
 type User struct {
@@ -16,8 +14,6 @@ type User struct {
 func NewUser(name, email string) (*User, error) {
 	name = strings.TrimSpace(name)
 	email = strings.TrimSpace(email)
-
-	id := uuid.New().String()
 
 	if name == "" {
 		fmt.Errorf("name cannot be empty")
@@ -34,7 +30,7 @@ func NewUser(name, email string) (*User, error) {
 		return nil, nil
 	}
 
-	return &User{ID: id, Name: name, Email: email}, nil
+	return &User{Name: name, Email: email}, nil
 }
 
 func (u User) Display() {
