@@ -14,7 +14,7 @@ func main() {
 	flag.Parse()
 
 	if *nameFlag != "" && *emailFlag != "" {
-		user.AddUser(nameFlag, emailFlag)
+		user.AddUserWithFlag(nameFlag, emailFlag)
 	}
 	menu.Menu()
 

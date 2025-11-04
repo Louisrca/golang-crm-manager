@@ -34,7 +34,7 @@ func MenuChoice() {
 func OptionSelector(opt string) {
 	switch {
 	case opt == "1":
-		user.AddUser(nil, nil)
+		user.AddUser()
 	case opt == "2":
 		user.UpdateUser()
 	case opt == "3":

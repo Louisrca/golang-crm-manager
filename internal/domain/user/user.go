@@ -22,34 +22,52 @@ var users = map[string]User{
 	},
 }
 
-func AddUser(nameFlag *string, emailFlag *string) (string, *User) {
+func AddUser() *User {
 
 	randID := uuid.New().String()
 
 	reader := bufio.NewReader(os.Stdin)
 
+	fmt.Println()
+	fmt.Println()
+	fmt.Println()
+	fmt.Print("Name please ? ")
+	name, _ := reader.ReadString('\n')
+	name = strings.TrimSpace(name)
+
+	fmt.Println()
+	fmt.Println()
+	fmt.Println()
+	fmt.Print("Email please ? ")
+	email, _ := reader.ReadString('\n')
+	email = strings.TrimSpace(email)
+
+	if email != "" && name != "" {
+
+		user := User{
+			Name:  name,
+			Email: email,
+		}
+
+		users[randID] = user
+		return &user
+	}
+	return nil
+
+}
+
+func AddUserWithFlag(nameFlag *string, emailFlag *string) *User {
+	randID := uuid.New().String()
+
 	var name string
+	var email string
+
 	if nameFlag != nil && *nameFlag != "" {
 		name = *nameFlag
-	} else {
-		fmt.Println()
-		fmt.Println()
-		fmt.Println()
-		fmt.Print("Name please ? ")
-		input, _ := reader.ReadString('\n')
-		name = strings.TrimSpace(input)
 	}
 
-	var email string
 	if emailFlag != nil && *emailFlag != "" {
 		email = *emailFlag
-	} else {
-		fmt.Println()
-		fmt.Println()
-		fmt.Println()
-		fmt.Print("Email please ? ")
-		input, _ := reader.ReadString('\n')
-		email = strings.TrimSpace(input)
 	}
 
 	user := User{
@@ -58,7 +76,7 @@ func AddUser(nameFlag *string, emailFlag *string) (string, *User) {
 	}
 
 	users[randID] = user
-	return randID, &user
+	return &user
 }
 
 func UpdateUser() *User {
