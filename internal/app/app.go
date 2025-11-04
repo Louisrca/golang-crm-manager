@@ -1,9 +1,10 @@
-package menu
+package app
 
 import (
+	"flag"
 	"fmt"
 
-	"github.com/Louisrca/golang-crm-manager.git/internal/domain/user"
+	"github.com/Louisrca/golang-crm-manager.git/internal/user"
 	"github.com/Louisrca/golang-crm-manager.git/utils/colorText"
 )
 
@@ -22,7 +23,15 @@ func MenuChoice() {
 	fmt.Println()
 }
 
-func Menu() {
+func Run() {
+	nameFlag := flag.String("name", "", "Nom du contact")
+	emailFlag := flag.String("email", "", "email du contact")
+	flag.Parse()
+
+	if *nameFlag != "" && *emailFlag != "" {
+		user.AddUserWithFlag(nameFlag, emailFlag)
+	}
+
 	for {
 
 		MenuChoice()
