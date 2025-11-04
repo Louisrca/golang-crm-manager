@@ -1,12 +1,16 @@
 package app
 
 import (
-	"flag"
+	"bufio"
 	"fmt"
+	"os"
+	"strings"
 
-	"github.com/Louisrca/golang-crm-manager.git/internal/user"
+	"github.com/Louisrca/golang-crm-manager.git/internal/storage"
 	"github.com/Louisrca/golang-crm-manager.git/utils/colorText"
 )
+
+var store = storage.NewMemoryUser()
 
 func MenuChoice() {
 	fmt.Println("____________________________")
@@ -24,13 +28,6 @@ func MenuChoice() {
 }
 
 func Run() {
-	nameFlag := flag.String("name", "", "Nom du contact")
-	emailFlag := flag.String("email", "", "email du contact")
-	flag.Parse()
-
-	if *nameFlag != "" && *emailFlag != "" {
-		user.AddUserWithFlag(nameFlag, emailFlag)
-	}
 
 	for {
 
@@ -51,13 +48,9 @@ func Run() {
 
 		switch choice {
 		case 1:
-			user.AddUser()
+			handleAddUser()
 		case 2:
-			user.UpdateUser()
-		case 3:
-			user.DeleteUser()
-		case 4:
-			user.GetUsers()
+			handleGetUsers()
 		case 5:
 			colorText.CyanText("Bye bye")
 			return
@@ -65,4 +58,48 @@ func Run() {
 			colorText.RedText("Please Make a choice boy")
 		}
 	}
+}
+
+func prompt(label string) (string, error) {
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Print(label)
+	in, err := reader.ReadString('\n')
+	if err != nil {
+		return "", fmt.Errorf("failed to read input: %w", err)
+	}
+	return strings.TrimSpace(in), nil
+}
+
+func handleAddUser() {
+
+	name, err := prompt("\nName: ")
+	if err != nil {
+		colorText.RedText(fmt.Sprintf("Error reading name: %s\n", err))
+		return
+	}
+
+	email, err := prompt("\nEmail: ")
+
+	if err != nil {
+		colorText.RedText(fmt.Sprintf("Error reading email: %s\n", err))
+		return
+	}
+	newUser, err := storage.NewUser(name, email)
+
+	id, err := store.AddUser(newUser)
+
+	colorText.GreenText(fmt.Sprintf("✅ User added successfully with ID: %s\n", id))
+}
+
+func handleGetUsers() {
+	users, err := store.GetUsers()
+	if err != nil {
+		colorText.RedText(fmt.Sprintf("❌ Error: %s\n", err))
+		return
+	}
+
+	for id, u := range users {
+		fmt.Printf("ID: %s | Name: %s | Email: %s\n", id, u.Name, u.Email)
+	}
+	colorText.CyanText("==================")
 }
