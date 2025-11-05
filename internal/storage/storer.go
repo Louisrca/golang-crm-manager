@@ -11,33 +11,29 @@ type User struct {
 	Email string
 }
 
-func NewUser(name, email string) (*User, error) {
+func NewUser(name, email string) *User {
 	name = strings.TrimSpace(name)
 	email = strings.TrimSpace(email)
 
 	if name == "" {
 		fmt.Errorf("name cannot be empty")
-		return nil, nil
+		return nil
 	}
 
 	if email == "" {
 		fmt.Errorf("email cannot be empty")
-		return nil, nil
+		return nil
 	}
 
 	if len(name) < 3 {
 		fmt.Errorf("name must contain at least 3 characters")
-		return nil, nil
+		return nil
 	}
 
-	return &User{Name: name, Email: email}, nil
+	return &User{Name: name, Email: email}
 }
 
-func (u User) Display() {
-	fmt.Println()
-}
-
-type UserStorer interface {
+type Storer interface {
 	AddUser(user *User) error
 	GetUsers() ([]*User, error)
 	GetUserByID(id string) (*User, error)

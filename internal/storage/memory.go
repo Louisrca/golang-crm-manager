@@ -1,8 +1,6 @@
 package storage
 
 import (
-	"fmt"
-
 	"github.com/google/uuid"
 )
 
@@ -14,17 +12,14 @@ func NewMemoryUser() *MemoryUserStore {
 	return &MemoryUserStore{users: make(map[string]*User)}
 }
 
-func (m *MemoryUserStore) AddUser(user *User) (string, error) {
-	if user == nil {
-		return "", fmt.Errorf("user cannot be nil")
-	}
+func (m *MemoryUserStore) AddUser(user *User) error {
 
 	id := uuid.New().String()
 
 	user.ID = id
 
 	m.users[id] = user
-	return id, nil
+	return nil
 }
 
 func (m *MemoryUserStore) GetUsers() ([]*User, error) {
@@ -37,22 +32,13 @@ func (m *MemoryUserStore) GetUsers() ([]*User, error) {
 
 func (m *MemoryUserStore) GetUserByID(id string) (*User, error) {
 
-	user, exists := m.users[id]
-
-	if !exists {
-		return nil, fmt.Errorf("user not found with ID: %s", id)
-	}
+	user := m.users[id]
 
 	return user, nil
 }
 
 func (m *MemoryUserStore) UpdateUser(id string, name string, email string) error {
-	user, exists := m.users[id]
-
-	if !exists {
-		return fmt.Errorf("user not found with ID: %s", id)
-	}
-
+	user := m.users[id]
 	user.Name = name
 	user.Email = email
 
@@ -60,9 +46,6 @@ func (m *MemoryUserStore) UpdateUser(id string, name string, email string) error
 }
 
 func (m *MemoryUserStore) DeleteUser(id string) error {
-	if _, exists := m.users[id]; !exists {
-		return fmt.Errorf("user not found with ID: %s", id)
-	}
 
 	delete(m.users, id)
 
