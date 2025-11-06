@@ -15,7 +15,7 @@ func BlueText(text string) {
 }
 
 func RedText(text string) {
-	fmt.Println(Red + text + Reset)
+	fmt.Errorf(Red + text + Reset)
 }
 
 func GreenText(text string) {
