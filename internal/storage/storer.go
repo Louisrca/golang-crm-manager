@@ -1,46 +1,26 @@
 package storage
 
-import (
-	"fmt"
-	"strings"
-)
+import "fmt"
 
+// Contact est notre structure de données centrale.
 type User struct {
-	ID    string
+	ID    int
 	Name  string
 	Email string
 }
 
-func NewUser(name, email string) *User {
-	name = strings.TrimSpace(name)
-	email = strings.TrimSpace(email)
-
-	if name == "" {
-		fmt.Errorf("name cannot be empty")
-		return nil
-	}
-
-	if email == "" {
-		fmt.Errorf("email cannot be empty")
-		return nil
-	}
-
-	if len(name) < 3 {
-		fmt.Errorf("name must contain at least 3 characters")
-		return nil
-	}
-
-	return &User{Name: name, Email: email}
-}
-
+// Storer est notre CONTRAT de stockage.
+// Il définit un ensemble de comportements (méthodes) que tout type
+// de stockage doit respecter. On ne se soucie pas de COMMENT c'est fait
+// (en mémoire, fichier, BDD), seulement de CE QUI peut être fait.
 type Storer interface {
-	AddUser(user *User) error
-	GetUsers() ([]*User, error)
-	GetUserByID(id string) (*User, error)
-	UpdateUser(id string, name string, email string) error
-	DeleteUser(id string) error
+	Add(contact *User) error
+	GetAll() ([]*User, error)
+	GetByID(id int) (*User, error) // Méthode pratique pour la suite
+	Update(id int, newName string, newEmail string) error
+	Delete(id int) error
 }
 
-var ErrorUserNotFound = func(id string) error {
-	return fmt.Errorf("User with id %s: ", id, " not found")
+var ErrContactNotFound = func(id int) error {
+	return fmt.Errorf("User avec l'ID %d non trouvé", id)
 }
