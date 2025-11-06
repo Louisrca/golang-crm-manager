@@ -4,7 +4,7 @@ import "fmt"
 
 // Contact est notre structure de données centrale.
 type User struct {
-	ID    int
+	ID    string
 	Name  string
 	Email string
 }
@@ -16,11 +16,11 @@ type User struct {
 type Storer interface {
 	Add(contact *User) error
 	GetAll() ([]*User, error)
-	GetByID(id int) (*User, error) // Méthode pratique pour la suite
-	Update(id int, newName string, newEmail string) error
-	Delete(id int) error
+	GetByID(id string) (*User, error) // Méthode pratique pour la suite
+	Update(id string, newName string, newEmail string) error
+	Delete(id string) error
 }
 
-var ErrContactNotFound = func(id int) error {
+var ErrContactNotFound = func(id string) error {
 	return fmt.Errorf("User avec l'ID %d non trouvé", id)
 }

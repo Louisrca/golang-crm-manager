@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 
-	readi "github.com/Louisrca/golang-crm-manager/utils/readInteger"
 	readl "github.com/Louisrca/golang-crm-manager/utils/readline"
 )
 
@@ -13,10 +12,7 @@ func UpdateUser() {
 	reader := bufio.NewReader(os.Stdin)
 
 	fmt.Print("Enter the ID of the contact to update: ")
-	id := readi.ReadInteger()
-	if id == -1 {
-		return
-	}
+	id, _ := readl.ReadLine(reader)
 
 	// On vérifie que le contact existe avant de demander les nouvelles infos
 	existingContact, err := store.GetByID(id)

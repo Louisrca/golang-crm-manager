@@ -2,6 +2,6 @@ package main
 
 import "github.com/Louisrca/golang-crm-manager/cmd"
 
-func main(){
+func main() {
 	cmd.Execute()
 }

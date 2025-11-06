@@ -10,13 +10,13 @@ func UsersList() {
 	}
 
 	if len(contacts) == 0 {
-		fmt.Println(" No contacts to display.")
+		fmt.Println(" No user to display.")
 		return
 	}
 
-	fmt.Println("\n--- Contact List ---")
-	for _, contact := range contacts {
-		fmt.Printf("ID: %d, Name: %s, Email: %s\n", contact.ID, contact.Name, contact.Email)
+	fmt.Println("\n--- User List ---")
+	for _, user := range contacts {
+		fmt.Printf("ID: %s, Name: %s, Email: %s\n", user.ID, user.Name, user.Email)
 	}
 
 }

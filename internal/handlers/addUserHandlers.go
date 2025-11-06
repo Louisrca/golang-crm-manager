@@ -9,7 +9,7 @@ import (
 	readl "github.com/Louisrca/golang-crm-manager/utils/readline"
 )
 
-var store = storage.NewMemoryStore()
+var store, err = storage.NewJSONStore("users.json")
 
 func AddUser() {
 	reader := bufio.NewReader(os.Stdin)
@@ -53,5 +53,5 @@ func AddUser() {
 		return
 	}
 
-	fmt.Printf(" Contact '%s' added with ID %d.\n", contact.Name, contact.ID)
+	fmt.Printf(" Contact '%s' added with ID %s.\n", contact.Name, contact.ID)
 }

@@ -1,18 +1,18 @@
 package handlers
 
 import (
+	"bufio"
 	"fmt"
+	"os"
 
-	readi "github.com/Louisrca/golang-crm-manager/utils/readInteger"
+	readl "github.com/Louisrca/golang-crm-manager/utils/readline"
 )
 
 func DeleteContact() {
+	reader := bufio.NewReader(os.Stdin)
 
 	fmt.Print("Enter the ID of the contact to delete: ")
-	id := readi.ReadInteger()
-	if id == -1 {
-		return
-	}
+	id, _ := readl.ReadLine(reader)
 
 	err := store.Delete(id)
 	if err != nil {
