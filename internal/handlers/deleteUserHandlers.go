@@ -5,14 +5,15 @@ import (
 	"fmt"
 	"os"
 
-	readl "github.com/Louisrca/golang-crm-manager/utils/readline"
+	"github.com/Louisrca/golang-crm-manager/internal/storage"
+	rl "github.com/Louisrca/golang-crm-manager/utils/readline"
 )
 
-func DeleteContact() {
+func DeleteContact(store storage.Storer) {
 	reader := bufio.NewReader(os.Stdin)
 
 	fmt.Print("Enter the ID of the contact to delete: ")
-	id, _ := readl.ReadLine(reader)
+	id, _ := rl.ReadLine(reader)
 
 	err := store.Delete(id)
 	if err != nil {

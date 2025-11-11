@@ -10,7 +10,7 @@ var deleteUserCmd = &cobra.Command{
 	Short: "Hello add",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		handlers.DeleteContact()
+		handlers.DeleteContact(Store)
 	}}
 
 func init() {

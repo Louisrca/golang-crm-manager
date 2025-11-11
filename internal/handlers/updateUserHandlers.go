@@ -5,14 +5,15 @@ import (
 	"fmt"
 	"os"
 
-	readl "github.com/Louisrca/golang-crm-manager/utils/readline"
+	"github.com/Louisrca/golang-crm-manager/internal/storage"
+	rl "github.com/Louisrca/golang-crm-manager/utils/readline"
 )
 
-func UpdateUser() {
+func UpdateUser(store storage.Storer) {
 	reader := bufio.NewReader(os.Stdin)
 
 	fmt.Print("Enter the ID of the contact to update: ")
-	id, _ := readl.ReadLine(reader)
+	id, _ := rl.ReadLine(reader)
 
 	// On vérifie que le contact existe avant de demander les nouvelles infos
 	existingContact, err := store.GetByID(id)
@@ -24,13 +25,13 @@ func UpdateUser() {
 	fmt.Printf("Updating '%s'. Leave blank to keep current value.\n", existingContact.Name)
 
 	fmt.Printf("New name (%s): ", existingContact.Name)
-	newName, err := readl.ReadLine(reader)
+	newName, err := rl.ReadLine(reader)
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 	}
 
 	fmt.Printf("New email (%s): ", existingContact.Email)
-	newEmail, err := readl.ReadLine(reader)
+	newEmail, err := rl.ReadLine(reader)
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 	}

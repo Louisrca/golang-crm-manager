@@ -10,7 +10,7 @@ var addUserCmd = &cobra.Command{
 	Short: "Hello add",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		handlers.AddUser()
+		handlers.AddUser(Store)
 	}}
 
 func init() {

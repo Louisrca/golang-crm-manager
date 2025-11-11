@@ -6,12 +6,10 @@ import (
 	"os"
 
 	"github.com/Louisrca/golang-crm-manager/internal/storage"
-	readl "github.com/Louisrca/golang-crm-manager/utils/readline"
+	rl "github.com/Louisrca/golang-crm-manager/utils/readline"
 )
 
-var store, err = storage.NewJSONStore("users.json")
-
-func AddUser() {
+func AddUser(store storage.Storer) {
 	reader := bufio.NewReader(os.Stdin)
 
 	var (
@@ -22,7 +20,7 @@ func AddUser() {
 
 	for {
 		fmt.Print("Enter contact name: ")
-		name, err = readl.ReadLine(reader)
+		name, err = rl.ReadLine(reader)
 		if err != nil {
 			fmt.Printf("Read error: %v. Please try again.\n", err)
 			continue
@@ -33,10 +31,9 @@ func AddUser() {
 		fmt.Println("Name cannot be empty. Please enter a value.")
 	}
 
-	// Boucle pour l'email (obligatoire)
 	for {
 		fmt.Print("Enter contact email: ")
-		email, err = readl.ReadLine(reader)
+		email, err = rl.ReadLine(reader)
 		if err != nil {
 			fmt.Printf("Read error: %v. Please try again.\n", err)
 			continue
@@ -46,12 +43,12 @@ func AddUser() {
 		}
 		fmt.Println("Email cannot be empty. Please enter a value.")
 	}
-	contact := &storage.User{Name: name, Email: email}
-	err = store.Add(contact)
+	newUser := &storage.User{Name: name, Email: email}
+	err = store.Add(newUser)
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return
 	}
 
-	fmt.Printf(" Contact '%s' added with ID %s.\n", contact.Name, contact.ID)
+	fmt.Printf(" Contact '%s' added with ID %s.\n", newUser.Name, newUser.ID)
 }

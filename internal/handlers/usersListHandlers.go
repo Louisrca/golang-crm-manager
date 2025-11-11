@@ -1,8 +1,12 @@
 package handlers
 
-import "fmt"
+import (
+	"fmt"
 
-func UsersList() {
+	"github.com/Louisrca/golang-crm-manager/internal/storage"
+)
+
+func UsersList(store storage.Storer) {
 	contacts, err := store.GetAll()
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)

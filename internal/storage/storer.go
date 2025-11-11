@@ -1,9 +1,27 @@
 package storage
 
-import "fmt"
+import (
+	"fmt"
 
-// Contact est notre structure de données centrale.
+	"gorm.io/gorm"
+)
+
+// Type générique utilisé dans la logique métier
 type User struct {
+	ID    string
+	Name  string
+	Email string
+}
+
+// Modèle spécifique à GORM
+type GORMUser struct {
+	gorm.Model
+	Name  string `json:"name" gorm:"type:varchar(100);not null"`
+	Email string `json:"email" gorm:"type:varchar(100);not null"`
+}
+
+// Modèle spécifique au JSON
+type JSONUser struct {
 	ID    string
 	Name  string
 	Email string
@@ -14,7 +32,7 @@ type User struct {
 // de stockage doit respecter. On ne se soucie pas de COMMENT c'est fait
 // (en mémoire, fichier, BDD), seulement de CE QUI peut être fait.
 type Storer interface {
-	Add(contact *User) error
+	Add(user *User) error
 	GetAll() ([]*User, error)
 	GetByID(id string) (*User, error) // Méthode pratique pour la suite
 	Update(id string, newName string, newEmail string) error

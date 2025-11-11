@@ -10,7 +10,7 @@ var updateUserCmd = &cobra.Command{
 	Short: "Hello add",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		handlers.UpdateUser()
+		handlers.UpdateUser(Store)
 	}}
 
 func init() {
