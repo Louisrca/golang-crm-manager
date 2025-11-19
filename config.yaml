@@ -1,0 +1,3 @@
+store: JSON
+json_path: users.json
+db_path: users.db
