@@ -13,14 +13,14 @@ type User struct {
 	Email string
 }
 
-// Modèle spécifique à GORM
+// Modèle spécifique à GORM (peu évoluer à l'avenir)
 type GORMUser struct {
 	gorm.Model
 	Name  string `json:"name" gorm:"type:varchar(100);not null"`
 	Email string `json:"email" gorm:"type:varchar(100);not null"`
 }
 
-// Modèle spécifique au JSON
+// Modèle spécifique au JSON (peu évoluer à l'avenir)
 type JSONUser struct {
 	ID    string
 	Name  string

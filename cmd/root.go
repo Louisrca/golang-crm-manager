@@ -46,6 +46,9 @@ var rootCmd = &cobra.Command{
 			}
 			Store = storage.NewGORMStore(db)
 			fmt.Println("📦 Using GORM storage")
+		case "LOCAL":
+			Store = storage.NewMemoryUserStore()
+			fmt.Println("📦 Using Local Memory storage")
 
 		default:
 			return fmt.Errorf("invalid store type: %s", storeType)

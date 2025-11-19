@@ -1,112 +1,62 @@
 package storage
 
 import (
-	"encoding/json"
 	"fmt"
-	"os"
 
 	"github.com/google/uuid"
 )
 
-type JSONStore struct {
-	filePath string
-	users    map[string]*User
+type MemoryUserStore struct {
+	users map[string]*User
 }
 
-func NewJSONStore(filePath string) (*JSONStore, error) {
-	store := &JSONStore{
-		filePath: filePath,
-		users:    make(map[string]*User),
+func NewMemoryUserStore() *MemoryUserStore {
+	return &MemoryUserStore{
+		users: make(map[string]*User),
 	}
-
-	if err := store.load(); err != nil {
-		if !os.IsNotExist(err) {
-			return nil, err
-		}
-	}
-
-	return store, nil
 }
 
-func (js *JSONStore) Add(user *User) error {
+func (m *MemoryUserStore) Add(user *User) error {
 	id := uuid.New().String()
 	user.ID = id
-	js.users[user.ID] = user
-	return js.save()
+	m.users[id] = user
+	return nil
 }
 
-func (js *JSONStore) GetAll() ([]*User, error) {
-	all := make([]*User, 0, len(js.users))
-	for _, u := range js.users {
-		all = append(all, u)
+func (m *MemoryUserStore) GetAll() ([]*User, error) {
+	res := make([]*User, 0, len(m.users))
+	for _, u := range m.users {
+		res = append(res, u)
 	}
-	return all, nil
+	return res, nil
 }
 
-func (js *JSONStore) GetByID(id string) (*User, error) {
-	user, ok := js.users[id]
-	if !ok {
-		return nil, fmt.Errorf("user avec l'ID %d non trouvé", id)
+func (m *MemoryUserStore) GetByID(id string) (*User, error) {
+	user := m.users[id]
+	if user == nil {
+		return nil, fmt.Errorf("user avec l'ID %s non trouvé", id)
 	}
 	return user, nil
 }
 
-func (js *JSONStore) Update(id string, newName, newEmail string) error {
-	user, err := js.GetByID(id)
-	if err != nil {
-		return err
+func (m *MemoryUserStore) Update(id string, name string, email string) error {
+	user := m.users[id]
+	if user == nil {
+		return fmt.Errorf("user avec l'ID %s non trouvé", id)
 	}
-
-	if newName != "" {
-		user.Name = newName
+	if name != "" {
+		user.Name = name
 	}
-	if newEmail != "" {
-		user.Email = newEmail
+	if email != "" {
+		user.Email = email
 	}
-	return js.save()
+	return nil
 }
 
-func (js *JSONStore) Delete(id string) error {
-	if _, ok := js.users[id]; !ok {
-		return fmt.Errorf("user avec l'ID %d non trouvé", id)
+func (m *MemoryUserStore) Delete(id string) error {
+	if _, ok := m.users[id]; !ok {
+		return fmt.Errorf("user avec l'ID %s non trouvé", id)
 	}
-	delete(js.users, id)
-	return js.save()
-}
-
-func (js *JSONStore) save() error {
-	file, err := os.Create(js.filePath)
-	if err != nil {
-		return fmt.Errorf("erreur lors de l'ouverture du fichier : %w", err)
-	}
-	defer file.Close()
-
-	usersSlice := make([]*User, 0, len(js.users))
-	for _, u := range js.users {
-		usersSlice = append(usersSlice, u)
-	}
-
-	encoder := json.NewEncoder(file)
-	encoder.SetIndent("", "  ")
-	return encoder.Encode(usersSlice)
-}
-
-func (js *JSONStore) load() error {
-	file, err := os.Open(js.filePath)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	var users []*User
-	if err := json.NewDecoder(file).Decode(&users); err != nil {
-		return fmt.Errorf("erreur de décodage JSON : %w", err)
-	}
-
-	js.users = make(map[string]*User)
-	for _, u := range users {
-		js.users[u.ID] = u
-	}
-
+	delete(m.users, id)
 	return nil
 }
