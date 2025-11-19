@@ -2,40 +2,53 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/Louisrca/golang-crm-manager/internal/storage"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
-var (
-	storeType string
-	Store     storage.Storer
-)
+var Store storage.Storer
 
 var rootCmd = &cobra.Command{
-	Use:   "crm-manager",
-	Short: "CRM avec plusieurs backends (JSON/GORM)",
+	Use:   "crm",
+	Short: "CRM CLI (YAML config + flags combinés)",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		viper.SetConfigName("config")
+		viper.SetConfigType("yaml")
+		viper.AddConfigPath(".")
+
+		if err := viper.ReadInConfig(); err == nil {
+			fmt.Println("✅ Config loaded from", viper.ConfigFileUsed())
+		} else {
+			fmt.Println("⚠️ No config.yaml found, using defaults and flags")
+		}
+
+		storeType := viper.GetString("store")
+		jsonPath := viper.GetString("json_path")
+		dbPath := viper.GetString("db_path")
+
 		switch storeType {
 		case "JSON":
-			var err error
-			Store, err = storage.NewJSONStore("users.json")
+			s, err := storage.NewJSONStore(jsonPath)
 			if err != nil {
-				return fmt.Errorf("failed to init JSON store: %w", err)
+				return err
 			}
+			Store = s
 			fmt.Println("📦 Using JSON storage")
+
 		case "GORM":
-			db, err := gorm.Open(sqlite.Open("users.db"), &gorm.Config{})
+			db, err := gorm.Open(sqlite.Open(dbPath), &gorm.Config{})
 			if err != nil {
-				return fmt.Errorf("cannot init GORM: %w", err)
+				return err
 			}
 			Store = storage.NewGORMStore(db)
 			fmt.Println("📦 Using GORM storage")
+
 		default:
-			return fmt.Errorf("invalid store type: %s (use JSON or GORM)", storeType)
+			return fmt.Errorf("invalid store type: %s", storeType)
 		}
 		return nil
 	},
@@ -43,11 +56,24 @@ var rootCmd = &cobra.Command{
 
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		fmt.Println("❌", err)
 	}
 }
 
 func init() {
-	rootCmd.PersistentFlags().StringVar(&storeType, "store", "JSON", "Type de stockage: JSON ou GORM")
+	// Définition des flags Cobra
+	rootCmd.PersistentFlags().String("store", "", "Type de stockage (JSON ou GORM)")
+	rootCmd.PersistentFlags().String("json_path", "", "Chemin du fichier JSON")
+	rootCmd.PersistentFlags().String("db_path", "", "Chemin de la base SQLite")
+
+	// Liaison flags → Viper
+	viper.BindPFlag("store", rootCmd.PersistentFlags().Lookup("store"))
+	viper.BindPFlag("json_path", rootCmd.PersistentFlags().Lookup("json_path"))
+	viper.BindPFlag("db_path", rootCmd.PersistentFlags().Lookup("db_path"))
+
+	// Valeurs par défaut
+	viper.SetDefault("store", "JSON")
+	viper.SetDefault("json_path", "users.json")
+	viper.SetDefault("db_path", "users.db")
+
 }
