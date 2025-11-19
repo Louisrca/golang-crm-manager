@@ -7,8 +7,8 @@ import (
 
 var addUserCmd = &cobra.Command{
 	Use:   "add",
-	Short: "Hello add",
-	Long:  ``,
+	Short: "Allow you to add an user",
+	Long:  `To use it :  ./golang-crm-manager add --store <storer>`,
 	Run: func(cmd *cobra.Command, args []string) {
 		handlers.AddUser(Store)
 	}}

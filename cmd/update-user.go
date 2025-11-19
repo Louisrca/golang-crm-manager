@@ -7,8 +7,8 @@ import (
 
 var updateUserCmd = &cobra.Command{
 	Use:   "update-user",
-	Short: "Hello add",
-	Long:  ``,
+	Short: "This command allows you to update an user with his ID",
+	Long:  `./golang-crm-manager update-user --store <storer>`,
 	Run: func(cmd *cobra.Command, args []string) {
 		handlers.UpdateUser(Store)
 	}}

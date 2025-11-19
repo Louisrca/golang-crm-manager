@@ -1,6 +1,6 @@
 # CRM Manager
 
-Bienvenue sur CRM Manager, une application en ligne de commande pour la gestion simplifiée de vos contacts utilisateurs.
+Bienvenue sur CRM Manager, une application en ligne de commande pour la gestion simplifiée de vos contacts utilisateurs avec support de multiples systèmes de stockage.
 
 > **Note** : Chaque release est identifiée par un tag `v0.x` où `x` correspond au jour du cours.
 
@@ -10,7 +10,8 @@ Bienvenue sur CRM Manager, une application en ligne de commande pour la gestion 
 - Lister tous les utilisateurs
 - Modifier un utilisateur existant
 - Supprimer un utilisateur
-- Ajouter un contact rapidement via flags CLI
+- Support de 3 types de stockage : JSON, GORM (SQLite), ou Mémoire locale
+- Configuration flexible via fichier YAML ou flags CLI
 
 ## Prérequis
 
@@ -21,24 +22,71 @@ Bienvenue sur CRM Manager, une application en ligne de commande pour la gestion 
 ```bash
 git clone <url-du-repo>
 cd crm-manager
+go build .
 ```
+
+## Configuration
+
+### Fichier config.yaml
+
+```yaml
+store: JSON
+json_path: users.json
+db_path: users.db
+```
+
+Si aucun fichier de configuration n'est présent, l'application utilisera les valeurs par défaut.
 
 ## Utilisation
 
-### Lancer l'application en mode interactif
+### Commandes disponibles
+
+#### Ajouter un utilisateur
 
 ```bash
-go run cmd/api/main.go
+./golang-crm-manager add --store JSON
 ```
 
-L'application affichera un menu interactif pour naviguer entre les différentes fonctionnalités.
-
-### Ajouter un utilisateur via la CLI
-
-Vous pouvez ajouter un utilisateur directement en ligne de commande avec des flags :
+#### Lister les utilisateurs
 
 ```bash
-go run cmd/api/main.go -name jeanmich -email jm@mail.fr
+./golang-crm-manager users-list --store JSON
+```
+
+#### Mettre à jour un utilisateur
+
+```bash
+./golang-crm-manager update-user --store JSON
+```
+
+#### Supprimer un utilisateur
+
+```bash
+./golang-crm-manager delete-user --store JSON
+```
+
+### Options de stockage
+
+Vous pouvez spécifier le type de stockage via le flag `--store` :
+
+- `JSON` : Stockage dans un fichier JSON (par défaut)
+- `GORM` : Base de données SQLite via GORM
+- `LOCAL` : Stockage en mémoire (temporaire)
+
+### Exemples d'utilisation
+
+```bash
+# Utiliser le stockage JSON
+./golang-crm-manager add --store JSON
+
+# Utiliser le stockage GORM (SQLite)
+./golang-crm-manager users-list --store GORM
+
+# Utiliser le stockage en mémoire
+./golang-crm-manager add --store LOCAL
+
+# Lister les utilisateurs avec la config par défaut
+./golang-crm-manager users-list
 ```
 
 ### Aide
@@ -46,28 +94,23 @@ go run cmd/api/main.go -name jeanmich -email jm@mail.fr
 Pour découvrir tous les flags disponibles et leurs options :
 
 ```bash
-go run cmd/api/main.go --help
+./golang-crm-manager --help
 ```
 
-## Exemples d'utilisation
+## Architecture
+
+Le projet utilise :
+
+- **Cobra** pour la gestion des commandes CLI
+- **Viper** pour la configuration (YAML + flags)
+- **GORM** pour l'accès aux bases de données
+- **Interface Storer** pour une abstraction du stockage
+
+## Dépendances
 
 ```bash
-# Ajouter un contact
-go run cmd/api/main.go -name jeanmich -email jeanmich@mail.com
-
-# Lancer le menu interactif
-go run cmd/api/main.go
-```
-
-## Structure du projet
-
-```
-crm-manager/
-├── cmd/
-│   └── api/
-│       └── main.go
-├── internal/
-│   └── domain/
-│   utils/
-└── README.md
+go get github.com/spf13/cobra
+go get github.com/spf13/viper
+go get gorm.io/gorm
+go get gorm.io/driver/sqlite
 ```

@@ -7,8 +7,8 @@ import (
 
 var usersListCmd = &cobra.Command{
 	Use:   "users-list",
-	Short: "Hello add",
-	Long:  ``,
+	Short: "Display a list of users",
+	Long:  `./golang-crm-manager users-list --store <storer>`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		handlers.UsersList(Store)

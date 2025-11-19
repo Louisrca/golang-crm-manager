@@ -23,7 +23,7 @@ var rootCmd = &cobra.Command{
 		if err := viper.ReadInConfig(); err == nil {
 			fmt.Println("✅ Config loaded from", viper.ConfigFileUsed())
 		} else {
-			fmt.Println("⚠️ No config.yaml found, using defaults and flags")
+			fmt.Println("⚠️ No config.yaml found, using JSON storage by default")
 		}
 
 		storeType := viper.GetString("store")
